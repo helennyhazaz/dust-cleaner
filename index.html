@@ -162,36 +162,36 @@ async function processFile(file, sensitivity, blurR, expand) {
   const origData = ctx.getImageData(0, 0, W, H);
   const orig = origData.data;
 
-  // Step 1: Fast box blur (approximation of Gaussian)
-  statsEl.innerHTML = `מטשטש... ${file.name}`;
+  // Step 1: Large blur for DETECTION only
+  statsEl.innerHTML = `מזהה לכלוך... ${file.name}`;
   await new Promise(r => setTimeout(r, 0));
-  const blurred = boxBlur(orig, W, H, blurR);
+  const blurredDetect = boxBlur(orig, W, H, blurR);
 
-  // Step 2: Build dust mask — pixels significantly darker than blurred version
-  // Threshold: if (blurred[i] - orig[i]) > sensitivity → dust
+  // Step 2: Build dust mask
   const mask = new Uint8Array(W * H);
   let spotCount = 0;
   for (let i = 0; i < W * H; i++) {
     const oi = i * 4;
     const gOrig  = (orig[oi]*77    + orig[oi+1]*150    + orig[oi+2]*29)    >> 8;
-    const gBlur  = (blurred[oi]*77 + blurred[oi+1]*150 + blurred[oi+2]*29) >> 8;
+    const gBlur  = (blurredDetect[oi]*77 + blurredDetect[oi+1]*150 + blurredDetect[oi+2]*29) >> 8;
     if (gBlur - gOrig > sensitivity) { mask[i] = 1; spotCount++; }
   }
 
-  // Step 3: Dilate mask slightly so healing covers edges
+  // Step 3: Dilate mask
   const dilated = dilateMask(mask, W, H, expand);
 
-  // Step 4: Heal — replace masked pixels with blurred value (feathered)
+  // Step 4: Small blur (radius 4) for HEALING — sharp enough to not look blurry
+  const blurredHeal = boxBlur(orig, W, H, 4);
+
+  // Step 5: Heal — replace masked pixels with small-blur value (feathered)
   const cleaned = new Uint8ClampedArray(orig);
   for (let i = 0; i < W * H; i++) {
     if (!dilated[i]) continue;
     const oi = i * 4;
-    // Use blurred value directly — best estimate of what should be there
-    // Feather based on original mask vs dilated
     const alpha = mask[i] ? 1.0 : 0.6;
-    cleaned[oi]   = Math.round(orig[oi]   * (1-alpha) + blurred[oi]   * alpha);
-    cleaned[oi+1] = Math.round(orig[oi+1] * (1-alpha) + blurred[oi+1] * alpha);
-    cleaned[oi+2] = Math.round(orig[oi+2] * (1-alpha) + blurred[oi+2] * alpha);
+    cleaned[oi]   = Math.round(orig[oi]   * (1-alpha) + blurredHeal[oi]   * alpha);
+    cleaned[oi+1] = Math.round(orig[oi+1] * (1-alpha) + blurredHeal[oi+1] * alpha);
+    cleaned[oi+2] = Math.round(orig[oi+2] * (1-alpha) + blurredHeal[oi+2] * alpha);
   }
 
   // Build display

@@ -6,103 +6,54 @@
 <title>מנקה לכלוכי פילטר</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #0f0f0f;
-    color: #eee;
-    min-height: 100vh;
-    padding: 30px 20px;
-  }
+  body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #eee; min-height: 100vh; padding: 30px 20px; }
   h1 { text-align: center; font-size: 2rem; margin-bottom: 8px; }
   .subtitle { text-align: center; color: #888; margin-bottom: 30px; font-size: 0.95rem; }
-
   .upload-zone {
-    border: 2px dashed #444;
-    border-radius: 16px;
-    padding: 50px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 24px;
-    background: #1a1a1a;
+    border: 2px dashed #444; border-radius: 16px; padding: 50px 20px;
+    text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 24px; background: #1a1a1a;
   }
   .upload-zone:hover, .upload-zone.drag { border-color: #4a9eff; background: #1a2a3a; }
   .upload-zone .icon { font-size: 3rem; margin-bottom: 12px; }
   .upload-zone p { color: #aaa; }
   .upload-zone span { color: #4a9eff; font-weight: 600; }
   #fileInput { display: none; }
-
   .controls {
-    background: #1a1a1a;
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin-bottom: 24px;
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-    align-items: center;
+    background: #1a1a1a; border-radius: 12px; padding: 20px 24px;
+    margin-bottom: 24px; display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
   }
   .ctrl-group { display: flex; flex-direction: column; gap: 6px; }
   .ctrl-group label { font-size: 0.85rem; color: #aaa; }
-  .ctrl-group input[type=range] { width: 160px; accent-color: #4a9eff; }
+  .ctrl-group input[type=range] { width: 150px; accent-color: #4a9eff; }
   .ctrl-group .val { font-size: 0.85rem; color: #4a9eff; font-weight: 600; text-align: center; }
-
-  .btn {
-    padding: 12px 28px;
-    border-radius: 10px;
-    border: none;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  .btn { padding: 12px 28px; border-radius: 10px; border: none; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
   .btn-primary { background: #4a9eff; color: #fff; }
   .btn-primary:hover { background: #2a7edf; }
   .btn-primary:disabled { background: #333; color: #666; cursor: not-allowed; }
-  .btn-dl { background: #1a4a1a; color: #8f8; border: 1px solid #2a6a2a; }
+  .btn-dl { background: #1a4a1a; color: #8f8; border: 1px solid #2a6a2a; padding: 8px 18px; font-size: 0.9rem; }
   .btn-dl:hover { background: #2a5a2a; }
-
-  .progress-bar { height: 4px; background: #222; border-radius: 4px; margin-bottom: 20px; overflow: hidden; display: none; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, #4a9eff, #8a5eff); transition: width 0.1s; }
+  .progress-bar { height: 6px; background: #222; border-radius: 4px; margin-bottom: 20px; overflow: hidden; display: none; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #4a9eff, #8a5eff); transition: width 0.15s; }
   .stats { text-align: center; color: #888; margin-bottom: 20px; font-size: 0.9rem; }
   .stats span { color: #4a9eff; font-weight: 600; }
-
-  .results { display: none; }
-  .result-card {
-    background: #1a1a1a;
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
+  .result-card { background: #1a1a1a; border-radius: 14px; padding: 16px; margin-bottom: 20px; }
   .result-card h3 { font-size: 0.95rem; color: #ccc; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .result-card h3 .spots { background: #e55; color: #fff; border-radius: 20px; padding: 2px 10px; font-size: 0.78rem; }
-  .result-card h3 .spots.clean { background: #5a5; }
-
-  .compare {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
+  .badge { border-radius: 20px; padding: 2px 10px; font-size: 0.78rem; font-weight: 600; }
+  .badge-red { background: #e55; color: #fff; }
+  .badge-green { background: #5a5; color: #fff; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .compare-side { display: flex; flex-direction: column; gap: 6px; }
   .compare-side span { font-size: 0.78rem; color: #888; text-align: center; }
-  .compare-side canvas { width: 100%; border-radius: 8px; }
-
+  .compare-side canvas { width: 100%; border-radius: 8px; cursor: zoom-in; }
   .dl-row { display: flex; justify-content: flex-end; margin-top: 12px; }
-
-  /* Lightbox */
   .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.96); z-index: 1000; align-items: center; justify-content: center; }
   .lightbox.open { display: flex; }
-  .lightbox canvas { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
+  .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; object-fit: contain; }
   .lightbox .close { position: absolute; top: 20px; right: 24px; font-size: 2rem; cursor: pointer; color: #fff; background: none; border: none; }
-
-  @media (max-width: 600px) {
-    .compare { grid-template-columns: 1fr; }
-    .controls { flex-direction: column; align-items: flex-start; }
-  }
+  @media (max-width: 600px) { .compare { grid-template-columns: 1fr; } .controls { flex-direction: column; align-items: flex-start; } }
 </style>
 </head>
 <body>
-
 <h1>🔍 מנקה לכלוכי פילטר / עדשה</h1>
 <p class="subtitle">מזהה נקודות אבק על הסנסור ומוחק אותן אוטומטית</p>
 
@@ -116,55 +67,48 @@
 <div class="controls">
   <div class="ctrl-group">
     <label>רגישות זיהוי</label>
-    <input type="range" id="sensitivity" min="1" max="10" value="5">
-    <div class="val" id="sensitivityVal">5</div>
+    <input type="range" id="sensitivity" min="1" max="20" value="8">
+    <div class="val" id="sensitivityVal">8</div>
   </div>
   <div class="ctrl-group">
-    <label>גודל נקודה מקסימלי (פיקסל)</label>
-    <input type="range" id="maxSpot" min="5" max="60" value="25">
-    <div class="val" id="maxSpotVal">25px</div>
+    <label>רדיוס טשטוש השוואה</label>
+    <input type="range" id="blurR" min="10" max="80" value="30">
+    <div class="val" id="blurRVal">30px</div>
   </div>
   <div class="ctrl-group">
-    <label>עוצמת תיקון</label>
-    <input type="range" id="healStr" min="1" max="10" value="7">
-    <div class="val" id="healStrVal">7</div>
+    <label>הרחבת ניקוי</label>
+    <input type="range" id="expand" min="0" max="15" value="4">
+    <div class="val" id="expandVal">4px</div>
   </div>
   <button class="btn btn-primary" id="processBtn" disabled>✨ נקה לכלוכים</button>
 </div>
 
 <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
-<div class="stats" id="stats"></div>
-<div class="results" id="results"></div>
+<div class="stats" id="statsEl"></div>
+<div id="results"></div>
 
 <div class="lightbox" id="lightbox">
   <button class="close" id="lbClose">✕</button>
-  <canvas id="lbCanvas"></canvas>
+  <img id="lbImg" src="" alt="">
 </div>
 
 <script>
 const uploadZone = document.getElementById('uploadZone');
-const fileInput = document.getElementById('fileInput');
+const fileInput  = document.getElementById('fileInput');
 const processBtn = document.getElementById('processBtn');
-const progressBar = document.getElementById('progressBar');
+const progressBar  = document.getElementById('progressBar');
 const progressFill = document.getElementById('progressFill');
-const statsEl = document.getElementById('stats');
-const resultsEl = document.getElementById('results');
-const lightbox = document.getElementById('lightbox');
-const lbCanvas = document.getElementById('lbCanvas');
-const lbCtx = lbCanvas.getContext('2d');
-
+const statsEl    = document.getElementById('statsEl');
+const resultsEl  = document.getElementById('results');
+const lightbox   = document.getElementById('lightbox');
+const lbImg      = document.getElementById('lbImg');
 let files = [];
 
-// Sliders
-['sensitivity','maxSpot','healStr'].forEach(id => {
-  const el = document.getElementById(id);
-  const val = document.getElementById(id+'Val');
-  el.addEventListener('input', () => {
-    val.textContent = id === 'maxSpot' ? el.value + 'px' : el.value;
-  });
+[['sensitivity',''],['blurR','px'],['expand','px']].forEach(([id,unit]) => {
+  const el = document.getElementById(id), vl = document.getElementById(id+'Val');
+  el.addEventListener('input', () => vl.textContent = el.value + unit);
 });
 
-// Upload
 uploadZone.addEventListener('click', () => fileInput.click());
 uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag'); });
 uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
@@ -175,292 +119,217 @@ function addFiles(f) {
   files = f.filter(x => x.type.startsWith('image/')).slice(0, 50);
   processBtn.disabled = files.length === 0;
   statsEl.innerHTML = files.length > 0 ? `נטענו <span>${files.length}</span> תמונות` : '';
-  resultsEl.style.display = 'none';
   resultsEl.innerHTML = '';
 }
 
-// Process
 processBtn.addEventListener('click', async () => {
   processBtn.disabled = true;
   progressBar.style.display = 'block';
   progressFill.style.width = '0%';
-  resultsEl.style.display = 'none';
   resultsEl.innerHTML = '';
-
   const sensitivity = parseInt(document.getElementById('sensitivity').value);
-  const maxSpot = parseInt(document.getElementById('maxSpot').value);
-  const healStr = parseInt(document.getElementById('healStr').value);
-
+  const blurR       = parseInt(document.getElementById('blurR').value);
+  const expand      = parseInt(document.getElementById('expand').value);
   for (let i = 0; i < files.length; i++) {
-    progressFill.style.width = ((i + 1) / files.length * 100) + '%';
-    statsEl.innerHTML = `מעבד תמונה <span>${i+1}</span> מתוך <span>${files.length}</span>...`;
-    const card = await processImage(files[i], sensitivity, maxSpot, healStr);
+    progressFill.style.width = ((i+1)/files.length*100) + '%';
+    statsEl.innerHTML = `מעבד <span>${i+1}</span> מתוך <span>${files.length}</span>...`;
+    const card = await processFile(files[i], sensitivity, blurR, expand);
     resultsEl.appendChild(card);
-    resultsEl.style.display = 'block';
-    await new Promise(r => setTimeout(r, 10));
+    await new Promise(r => setTimeout(r, 0));
   }
-
-  statsEl.innerHTML = `✅ הושלם! <span>${files.length}</span> תמונות נוקו`;
+  statsEl.innerHTML = `✅ הושלם! עובד על <span>${files.length}</span> תמונות`;
   progressBar.style.display = 'none';
   processBtn.disabled = false;
 });
 
-async function processImage(file, sensitivity, maxSpot, healStr) {
+function loadImage(file) {
   return new Promise(resolve => {
     const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = () => {
-      // Work at full resolution
-      const W = img.width, H = img.height;
-
-      // Original canvas
-      const origCanvas = document.createElement('canvas');
-      origCanvas.width = W; origCanvas.height = H;
-      const origCtx = origCanvas.getContext('2d');
-      origCtx.drawImage(img, 0, 0);
-      const origData = origCtx.getImageData(0, 0, W, H);
-
-      // Cleaned canvas
-      const cleanCanvas = document.createElement('canvas');
-      cleanCanvas.width = W; cleanCanvas.height = H;
-      const cleanCtx = cleanCanvas.getContext('2d');
-      cleanCtx.drawImage(img, 0, 0);
-
-      // Detect dust spots
-      const spots = detectDustSpots(origData, W, H, sensitivity, maxSpot);
-
-      // Heal each spot
-      spots.forEach(spot => {
-        healSpot(cleanCtx, W, H, spot, healStr);
-      });
-
-      // Build display canvases (scaled down for display)
-      const scale = Math.min(1, 800 / W);
-      const dW = Math.round(W * scale), dH = Math.round(H * scale);
-
-      const dispOrig = document.createElement('canvas');
-      dispOrig.width = dW; dispOrig.height = dH;
-      dispOrig.getContext('2d').drawImage(origCanvas, 0, 0, dW, dH);
-
-      const dispClean = document.createElement('canvas');
-      dispClean.width = dW; dispClean.height = dH;
-      dispClean.getContext('2d').drawImage(cleanCanvas, 0, 0, dW, dH);
-
-      // Draw markers on orig
-      const markerCtx = dispOrig.getContext('2d');
-      markerCtx.strokeStyle = '#ff3333';
-      markerCtx.lineWidth = 2;
-      spots.forEach(s => {
-        markerCtx.beginPath();
-        markerCtx.arc(s.x * scale, s.y * scale, (s.r + 4) * scale, 0, Math.PI * 2);
-        markerCtx.stroke();
-      });
-
-      // Card
-      const card = document.createElement('div');
-      card.className = 'result-card';
-      card.innerHTML = `
-        <h3>
-          📄 ${file.name}
-          <span class="spots ${spots.length === 0 ? 'clean' : ''}">${spots.length === 0 ? '✅ נקי' : `${spots.length} נקודות`}</span>
-        </h3>
-        <div class="compare">
-          <div class="compare-side">
-            <span>לפני — נקודות מסומנות באדום</span>
-          </div>
-          <div class="compare-side">
-            <span>אחרי — לאחר ניקוי</span>
-          </div>
-        </div>
-      `;
-
-      const compare = card.querySelector('.compare');
-      const sides = compare.querySelectorAll('.compare-side');
-      sides[0].appendChild(dispOrig);
-      sides[1].appendChild(dispClean);
-
-      // Click to enlarge
-      dispOrig.style.cursor = 'zoom-in';
-      dispClean.style.cursor = 'zoom-in';
-      dispOrig.addEventListener('click', () => openLightbox(origCanvas));
-      dispClean.addEventListener('click', () => openLightbox(cleanCanvas));
-
-      // Download button
-      const dlRow = document.createElement('div');
-      dlRow.className = 'dl-row';
-      const dlBtn = document.createElement('button');
-      dlBtn.className = 'btn btn-dl';
-      dlBtn.textContent = '💾 הורד תמונה מנוקה';
-      dlBtn.addEventListener('click', () => {
-        const a = document.createElement('a');
-        a.href = cleanCanvas.toDataURL('image/jpeg', 0.95);
-        a.download = 'cleaned_' + file.name.replace(/\.[^.]+$/, '') + '.jpg';
-        a.click();
-      });
-      dlRow.appendChild(dlBtn);
-      card.appendChild(dlRow);
-
-      URL.revokeObjectURL(url);
-      resolve(card);
-    };
-    img.src = url;
+    img.onload = () => resolve(img);
+    img.src = URL.createObjectURL(file);
   });
 }
 
-function detectDustSpots(imageData, W, H, sensitivity, maxSpot) {
-  const data = imageData.data;
-  const threshold = 130 - sensitivity * 10; // darker = more sensitive
-  const minR = 2;
-  const spots = [];
-  const visited = new Uint8Array(W * H);
+async function processFile(file, sensitivity, blurR, expand) {
+  const img = await loadImage(file);
+  const W = img.width, H = img.height;
 
-  // Convert to grayscale
-  const gray = new Float32Array(W * H);
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+
+  const origData = ctx.getImageData(0, 0, W, H);
+  const orig = origData.data;
+
+  // Step 1: Fast box blur (approximation of Gaussian)
+  statsEl.innerHTML = `מטשטש... ${file.name}`;
+  await new Promise(r => setTimeout(r, 0));
+  const blurred = boxBlur(orig, W, H, blurR);
+
+  // Step 2: Build dust mask — pixels significantly darker than blurred version
+  // Threshold: if (blurred[i] - orig[i]) > sensitivity → dust
+  const mask = new Uint8Array(W * H);
+  let spotCount = 0;
   for (let i = 0; i < W * H; i++) {
-    gray[i] = (data[i*4]*0.299 + data[i*4+1]*0.587 + data[i*4+2]*0.114);
+    const oi = i * 4;
+    const gOrig  = (orig[oi]*77    + orig[oi+1]*150    + orig[oi+2]*29)    >> 8;
+    const gBlur  = (blurred[oi]*77 + blurred[oi+1]*150 + blurred[oi+2]*29) >> 8;
+    if (gBlur - gOrig > sensitivity) { mask[i] = 1; spotCount++; }
   }
 
-  // Compute local brightness (to find spots darker than surroundings)
-  const blurR = Math.max(maxSpot * 2, 30);
+  // Step 3: Dilate mask slightly so healing covers edges
+  const dilated = dilateMask(mask, W, H, expand);
 
-  for (let y = blurR; y < H - blurR; y += 3) {
-    for (let x = blurR; x < W - blurR; x += 3) {
-      if (visited[y * W + x]) continue;
+  // Step 4: Heal — replace masked pixels with blurred value (feathered)
+  const cleaned = new Uint8ClampedArray(orig);
+  for (let i = 0; i < W * H; i++) {
+    if (!dilated[i]) continue;
+    const oi = i * 4;
+    // Use blurred value directly — best estimate of what should be there
+    // Feather based on original mask vs dilated
+    const alpha = mask[i] ? 1.0 : 0.6;
+    cleaned[oi]   = Math.round(orig[oi]   * (1-alpha) + blurred[oi]   * alpha);
+    cleaned[oi+1] = Math.round(orig[oi+1] * (1-alpha) + blurred[oi+1] * alpha);
+    cleaned[oi+2] = Math.round(orig[oi+2] * (1-alpha) + blurred[oi+2] * alpha);
+  }
 
-      const px = gray[y * W + x];
+  // Build display
+  const scale = Math.min(1, 900/W);
+  const dW = Math.round(W*scale), dH = Math.round(H*scale);
 
-      // Sample surrounding area average
-      let sum = 0, cnt = 0;
-      const step = Math.max(1, blurR / 8);
-      for (let dy = -blurR; dy <= blurR; dy += step) {
-        for (let dx = -blurR; dx <= blurR; dx += step) {
-          const nx = Math.round(x + dx), ny = Math.round(y + dy);
-          if (nx >= 0 && nx < W && ny >= 0 && ny < H) {
-            sum += gray[ny * W + nx]; cnt++;
+  // Before
+  const beforeC = document.createElement('canvas');
+  beforeC.width = dW; beforeC.height = dH;
+  const bCtx = beforeC.getContext('2d');
+  bCtx.putImageData(origData, 0, 0);
+  // We need to scale — draw to temp then copy
+  const tmpB = document.createElement('canvas');
+  tmpB.width = dW; tmpB.height = dH;
+  tmpB.getContext('2d').drawImage(canvas, 0, 0, dW, dH);
+  bCtx.clearRect(0,0,dW,dH);
+  bCtx.drawImage(tmpB, 0, 0);
+  // Highlight mask
+  bCtx.fillStyle = 'rgba(255,50,50,0.35)';
+  // Draw mask as overlay (scale down)
+  for (let py = 0; py < dH; py++) {
+    for (let px = 0; px < dW; px++) {
+      const sx = Math.round(px/scale), sy = Math.round(py/scale);
+      if (sx < W && sy < H && dilated[sy*W+sx]) {
+        bCtx.fillRect(px, py, 1, 1);
+      }
+    }
+  }
+
+  // After
+  const afterC = document.createElement('canvas');
+  afterC.width = dW; afterC.height = dH;
+  const aCtx = afterC.getContext('2d');
+  ctx.putImageData(new ImageData(cleaned, W, H), 0, 0);
+  aCtx.drawImage(canvas, 0, 0, dW, dH);
+
+  // Download blob
+  const dlBlob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.95));
+  const dlURL  = URL.createObjectURL(dlBlob);
+
+  // Card
+  const badge = spotCount === 0
+    ? `<span class="badge badge-green">✅ נקי</span>`
+    : `<span class="badge badge-red">${spotCount} פיקסלים נוקו</span>`;
+
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  card.innerHTML = `<h3>📄 ${file.name} ${badge}</h3>
+    <div class="compare">
+      <div class="compare-side"><span>לפני — אזורי לכלוך מודגשים באדום</span></div>
+      <div class="compare-side"><span>אחרי — לאחר ניקוי</span></div>
+    </div>
+    <div class="dl-row"></div>`;
+
+  const sides = card.querySelectorAll('.compare-side');
+  sides[0].appendChild(beforeC);
+  sides[1].appendChild(afterC);
+
+  beforeC.addEventListener('click', () => { lbImg.src = beforeC.toDataURL(); lightbox.classList.add('open'); });
+  afterC.addEventListener('click',  () => { lbImg.src = afterC.toDataURL();  lightbox.classList.add('open'); });
+
+  const dlBtn = document.createElement('button');
+  dlBtn.className = 'btn btn-dl';
+  dlBtn.textContent = '💾 הורד מנוקה';
+  dlBtn.addEventListener('click', () => {
+    const a = document.createElement('a'); a.href = dlURL;
+    a.download = 'cleaned_' + file.name.replace(/\.[^.]+$/, '') + '.jpg';
+    a.click();
+  });
+  card.querySelector('.dl-row').appendChild(dlBtn);
+  return card;
+}
+
+// Fast separable box blur
+function boxBlur(src, W, H, r) {
+  const passes = 3; // 3 box blur passes ≈ Gaussian
+  let buf = new Float32Array(W * H * 4);
+  for (let i = 0; i < src.length; i++) buf[i] = src[i];
+
+  for (let p = 0; p < passes; p++) {
+    buf = blurH(buf, W, H, r);
+    buf = blurV(buf, W, H, r);
+  }
+
+  const out = new Uint8ClampedArray(W * H * 4);
+  for (let i = 0; i < out.length; i++) out[i] = buf[i];
+  return out;
+}
+
+function blurH(src, W, H, r) {
+  const dst = new Float32Array(src.length);
+  const inv = 1 / (2*r+1);
+  for (let y = 0; y < H; y++) {
+    for (let c = 0; c < 4; c++) {
+      let sum = 0;
+      for (let x = -r; x <= r; x++) sum += src[(y*W + Math.max(0,Math.min(W-1,x)))*4+c];
+      for (let x = 0; x < W; x++) {
+        dst[(y*W+x)*4+c] = sum * inv;
+        const add = Math.min(W-1, x+r+1), rem = Math.max(0, x-r);
+        sum += src[(y*W+add)*4+c] - src[(y*W+rem)*4+c];
+      }
+    }
+  }
+  return dst;
+}
+
+function blurV(src, W, H, r) {
+  const dst = new Float32Array(src.length);
+  const inv = 1 / (2*r+1);
+  for (let x = 0; x < W; x++) {
+    for (let c = 0; c < 4; c++) {
+      let sum = 0;
+      for (let y = -r; y <= r; y++) sum += src[(Math.max(0,Math.min(H-1,y))*W+x)*4+c];
+      for (let y = 0; y < H; y++) {
+        dst[(y*W+x)*4+c] = sum * inv;
+        const add = Math.min(H-1, y+r+1), rem = Math.max(0, y-r);
+        sum += src[(add*W+x)*4+c] - src[(rem*W+x)*4+c];
+      }
+    }
+  }
+  return dst;
+}
+
+function dilateMask(mask, W, H, r) {
+  if (r <= 0) return mask;
+  const out = new Uint8Array(W * H);
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      if (mask[y*W+x]) {
+        for (let dy = -r; dy <= r; dy++)
+          for (let dx = -r; dx <= r; dx++) {
+            const nx=x+dx, ny=y+dy;
+            if (nx>=0&&nx<W&&ny>=0&&ny<H) out[ny*W+nx]=1;
           }
-        }
-      }
-      const localAvg = sum / cnt;
-
-      // Spot is significantly darker than surroundings
-      if (localAvg - px > threshold) {
-        // Flood fill to measure spot size
-        const filled = floodFill(gray, W, H, x, y, px, threshold * 0.6, visited);
-        if (filled.size >= minR * minR && filled.size <= maxSpot * maxSpot * Math.PI) {
-          const cx = filled.sumX / filled.size;
-          const cy = filled.sumY / filled.size;
-          const r = Math.sqrt(filled.size / Math.PI) * 1.2;
-          if (r >= minR && r <= maxSpot) {
-            spots.push({ x: cx, y: cy, r: Math.min(r, maxSpot) });
-          }
-        }
       }
     }
   }
-
-  // Merge overlapping spots
-  return mergeSpots(spots);
-}
-
-function floodFill(gray, W, H, startX, startY, darkVal, threshold, visited) {
-  const stack = [[startX, startY]];
-  let sumX = 0, sumY = 0, size = 0;
-  const maxSize = 5000;
-
-  while (stack.length > 0 && size < maxSize) {
-    const [x, y] = stack.pop();
-    if (x < 0 || x >= W || y < 0 || y >= H) continue;
-    const idx = y * W + x;
-    if (visited[idx]) continue;
-    const px = gray[idx];
-    // Check if this pixel is also dark relative to expected
-    if (gray[idx] > darkVal + threshold * 1.5) continue;
-    visited[idx] = 1;
-    sumX += x; sumY += y; size++;
-    stack.push([x+1,y],[x-1,y],[x,y+1],[x,y-1]);
-  }
-  return { sumX, sumY, size };
-}
-
-function mergeSpots(spots) {
-  const merged = [];
-  const used = new Array(spots.length).fill(false);
-  for (let i = 0; i < spots.length; i++) {
-    if (used[i]) continue;
-    let s = { ...spots[i] };
-    for (let j = i + 1; j < spots.length; j++) {
-      if (used[j]) continue;
-      const dx = s.x - spots[j].x, dy = s.y - spots[j].y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < s.r + spots[j].r + 10) {
-        s.x = (s.x + spots[j].x) / 2;
-        s.y = (s.y + spots[j].y) / 2;
-        s.r = Math.max(s.r, spots[j].r);
-        used[j] = true;
-      }
-    }
-    merged.push(s);
-  }
-  return merged;
-}
-
-function healSpot(ctx, W, H, spot, healStr) {
-  const { x, y, r } = spot;
-  const radius = Math.ceil(r + 2);
-  const sampleR = Math.ceil(radius * 1.8 + healStr * 2);
-
-  // Sample pixels from around the spot
-  const cx = Math.round(x), cy = Math.round(y);
-
-  // Collect border pixels (ring outside the spot)
-  const borderPixels = [];
-  for (let angle = 0; angle < Math.PI * 2; angle += 0.15) {
-    const bx = Math.round(cx + Math.cos(angle) * sampleR);
-    const by = Math.round(cy + Math.sin(angle) * sampleR);
-    if (bx >= 0 && bx < W && by >= 0 && by < H) {
-      const pdata = ctx.getImageData(bx, by, 1, 1).data;
-      borderPixels.push([pdata[0], pdata[1], pdata[2]]);
-    }
-  }
-  if (borderPixels.length === 0) return;
-
-  // Fill spot with smooth interpolation from border
-  for (let py = cy - radius; py <= cy + radius; py++) {
-    for (let px = cx - radius; px <= cx + radius; px++) {
-      const dx = px - cx, dy = py - cy;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist > radius || px < 0 || px >= W || py < 0 || py >= H) continue;
-
-      // Weighted average of border pixels (closer angle = more weight)
-      let r = 0, g = 0, b = 0, totalW = 0;
-      const angle = Math.atan2(dy, dx);
-      borderPixels.forEach((bp, idx) => {
-        const bAngle = (idx / borderPixels.length) * Math.PI * 2;
-        let angleDiff = Math.abs(angle - bAngle);
-        if (angleDiff > Math.PI) angleDiff = Math.PI * 2 - angleDiff;
-        const w = 1 / (angleDiff + 0.1);
-        r += bp[0] * w; g += bp[1] * w; b += bp[2] * w; totalW += w;
-      });
-      r /= totalW; g /= totalW; b /= totalW;
-
-      // Feather edges
-      const alpha = Math.min(1, (radius - dist + 1) / 2);
-      const existing = ctx.getImageData(px, py, 1, 1).data;
-      const fr = Math.round(r * alpha + existing[0] * (1 - alpha));
-      const fg = Math.round(g * alpha + existing[1] * (1 - alpha));
-      const fb = Math.round(b * alpha + existing[2] * (1 - alpha));
-
-      ctx.fillStyle = `rgb(${fr},${fg},${fb})`;
-      ctx.fillRect(px, py, 1, 1);
-    }
-  }
-}
-
-function openLightbox(srcCanvas) {
-  lbCanvas.width = srcCanvas.width;
-  lbCanvas.height = srcCanvas.height;
-  lbCtx.drawImage(srcCanvas, 0, 0);
-  lightbox.classList.add('open');
+  return out;
 }
 
 document.getElementById('lbClose').addEventListener('click', () => lightbox.classList.remove('open'));
